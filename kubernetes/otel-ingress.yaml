@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: otel-demo-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    # Configure 80 and 443 listeners
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    # Redirect HTTP to HTTPS
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    # Use the issued certificate ARN
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:951247597157:certificate/216cca02-955f-4d27-9fd4-cd35288a03f6
+spec:
+  rules:
+  - host: www.rajdevops.click # <<<<<<<<<<<< CHANGED HERE
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: opentelemetry-demo-frontendproxy
+            port:
+              number: 8080

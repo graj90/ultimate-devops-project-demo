@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "opentelemetry-demo-ingress"
+  namespace: "default"
+  annotations:
+    # --- ADD/MODIFY THESE ANNOTATIONS ---
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:506776019563:certificate/823e7bd5-76a8-45b7-a5a9-53fe691deb6f
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    # --- KEEP THE OLD ANNOTATIONS ---
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+    - host: "rajdevops.click"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "opentelemetry-demo-frontendproxy"
+                port:
+                  number: 8080
